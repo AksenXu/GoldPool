@@ -388,6 +388,7 @@ static VCAP300_OSD_CHAR_T VCAP300_OSD_Default_Char[] = {
         {0x00,0x00,0x38,0x80,0x6d,0x80,0x47,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,},
     },
 };
+#define NO_OTHER_PRINTF
 
 void print12x18Array(unsigned char fbitmap[36])
 {
@@ -408,7 +409,7 @@ void print18x12Array(unsigned char fbitmap[36])
 {
     for(int i = 0; i < 12; i ++) {
         unsigned int data = (unsigned int)fbitmap[i * 3] << 10 | (unsigned int)fbitmap[i * 3 + 1] << 2 | fbitmap[i * 3 + 2] >> 6;
-        for(int j = 0; j < 18; j++) {
+        for(int j = 2; j < 14; j++) {
             if(data & (1 << (17 - j))) {
                 printf("+");
             } else {
@@ -430,8 +431,11 @@ void rotateBitmap(unsigned char fbitmap[36],
     unsigned int dstBitmap[12] = {0};
     for(int i = 0; i < 12; i++) {
         for(int j = 0; j < 18; j++) {
-            //dstBitmap[i] |= ((orgBitmap[j] >> (11 - i)) & 1) << j;
-            dstBitmap[i] |= ((orgBitmap[j] >> i) & 1) << (17 - j);
+            if(90 == angle) {
+                dstBitmap[i] |= ((orgBitmap[j] >> (11 - i)) & 1) << j;
+            } else if( 270 == angle) {
+                dstBitmap[i] |= ((orgBitmap[j] >> i) & 1) << (17 - j);
+            }
         }
         
         rotateBitmap[3 * i] = dstBitmap[i] >> 10;
@@ -442,11 +446,24 @@ void rotateBitmap(unsigned char fbitmap[36],
 
 void printfoutArray(unsigned char rotatebitmap[36])
 {
+#ifndef NO_OTHER_PRINTF
     printf("{");
     for(int i = 0; i < 36; i++) {
         printf("0x%x,", rotatebitmap[i]);
     }
-    printf("},\n");    
+    printf("},\n");
+#endif
+
+    //convert 18 * 12bit array to 12 * 12bit array, choose the 17 - 0 bit 13 - 2 bit
+    printf("{");
+    for(int i = 0; i < 12; i++) {
+        unsigned int data = (unsigned int) rotatebitmap[3*i] << 16 | (unsigned int) rotatebitmap[3*i + 1] << 8 | rotatebitmap[3*i + 2];
+        unsigned char data1 = (data >> 20) & 0xFF;
+        unsigned char data2 = (data >> 12) & 0xFF;
+        printf("0x%x,0x%x,", data1, data2);
+    }
+    printf("0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0},\n");
+    
 }
 
 void rotateFont(unsigned char fbitmap[36], int angle)
@@ -457,16 +474,19 @@ void rotateFont(unsigned char fbitmap[36], int angle)
  
     //incoming font is 12 * 18, we want to rotate to 18 * 12, it means 3bytes one line, and 12 line, it need 3byte*12 = 36bytes
     //the same size with incoming data
+
+#ifndef NO_OTHER_PRINTF    
     printf("Original: ------------------------\n");
     print12x18Array(fbitmap);
-    
+#endif    
     unsigned char rotatebitmap[36];
     
     rotateBitmap(fbitmap, rotatebitmap, angle);
     
+#ifndef NO_OTHER_PRINTF    
     printf("Rotage:   +++++++++++++++++++++++++\n");
     print18x12Array(rotatebitmap);
-    
+#endif    
     memcpy(fbitmap, rotatebitmap, sizeof(rotatebitmap));
     
     printfoutArray(rotatebitmap);
@@ -475,9 +495,15 @@ void rotateFont(unsigned char fbitmap[36], int angle)
 
 int main(int argc, char* argv[])
 {
+    printf("static VCAP300_OSD_CHAR_T VCAP300_OSD_Default_Char[] = {\n");
     for(int i = 0; i < sizeof(VCAP300_OSD_Default_Char) / sizeof(VCAP300_OSD_CHAR_T); i++) {
-        rotateFont(VCAP300_OSD_Default_Char[i].fbitmap, 90);
+        printf("    {\n");
+        printf("        0x%x,\n", VCAP300_OSD_Default_Char[i].font);
+        printf("        ");
+        rotateFont(VCAP300_OSD_Default_Char[i].fbitmap, 270);
+        printf("    },\n");
     }
+    printf("};\n");
     
     return 0;
 }

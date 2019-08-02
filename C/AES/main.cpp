@@ -41,12 +41,16 @@ int main(int argc, char* argv[])
 		printf("main fopen failed %s\n", strerror(errno));
 		return -1;
 	}
-	FILE* fw = fopen("aes.dump", "wb");
-	if(fw == NULL) {
+	FILE* fw_video = fopen("video.h264", "wb");
+	if(fw_video == NULL) {
 		printf("main fopen failed %s\n", strerror(errno));
 		return -1;
 	}
-	
+	FILE* fw_audio = fopen("audio.aac", "wb");
+	if(fw_audio == NULL) {
+		printf("main fopen failed %s\n", strerror(errno));
+		return -1;
+	}	
 	StreamHeaderPrimary header;
 	StreamHeaderExterntion header1;
 	while(1) {
@@ -78,12 +82,15 @@ int main(int argc, char* argv[])
 		aes_crypt_cbc( &ctx, AES_DECRYPT, payloadlen, iv, (const unsigned char*)enc_data, (unsigned char*)dec_data);
 	
 		if(header.type != 2) {
-			fwrite(dec_data, payloadlen, 1, fw);
-		}
+			fwrite(dec_data, payloadlen, 1, fw_video);
+		} else {
+            fwrite(dec_data, payloadlen, 1, fw_audio);
+        }
 		free(enc_data);
 		free(dec_data);
 	}
-	fclose(fw);
+	fclose(fw_video);
+	fclose(fw_audio);
 	fclose(f);
 	
 	return 0;	

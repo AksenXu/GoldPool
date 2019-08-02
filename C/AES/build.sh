@@ -1,1 +1,1 @@
-gcc -o test aes.cpp  main.cpp
+gcc -o decrypt_video aes.cpp  main.cpp
