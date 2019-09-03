@@ -1,0 +1,30 @@
+syntax = "proto2";
+
+package main;
+
+message RegisterThirdPartyReq {
+    optional string device_id    = 1; 
+    optional string channel      = 2;
+    required uint64 ts           = 3;
+    required string checker      = 4;
+    optional string imei         = 5;
+    optional string wifi_mac     = 6;
+    optional string mac          = 7;
+    optional string brand        = 8;
+    optional string manufacturer = 9;
+    optional string model        = 10;
+    optional string product      = 11;
+    optional string hardware     = 12;
+    optional string device       = 13;
+    optional string os_version   = 14;
+    optional string app_version  = 15;
+    optional string random       = 16;
+    optional string board        = 17;
+    
+}
+
+message RegisterThirdPartyRsp {
+    required int32  code      = 1; // 0 succ otherwise fail
+    required string msg       = 2;
+    optional string device_id = 3;
+}
