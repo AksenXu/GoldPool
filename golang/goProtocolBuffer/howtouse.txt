@@ -1,0 +1,16 @@
+1 protoc --go_out=. *.proto
+You need protoc-gen-go and protoc in the $PATH
+
+2 go build
+
+3 ./goProtocolBuffer server &
+
+4 ./goProtocolBuffer 
+
+You will get the message like:
+
+fillPBData -> Deviceid 12345678 Gpsdata 22123456
+fillPBData -> Cmd 0 Seq 1 Len 14
+
+parsePBData <- Cmd 0 Seq 1 Len 14
+parsePBData <- Deviceid 12345678 Gpsdata 22123456

@@ -69,15 +69,9 @@ func fillPBData() *bytes.Buffer {
 	return buf
 }
 
-//FIXME: tcp data is streaming, not packet
 func parsePBData(data []byte) {
-	var header messsageHeader
-	binary.Read(bytes.NewReader(data), binary.LittleEndian, &header)
-
-	fmt.Printf("parsePBData <- Cmd %v Seq %v Len %v\n", header.Cmd, header.Seq, header.Len)
-
 	gpsData := &DeviceGPSMessage{}
-	err := proto.Unmarshal(data[binary.Size(header):], gpsData)
+	err := proto.Unmarshal(data, gpsData)
 	if err != nil {
 		fmt.Printf("unmarshaling error: %v\n", err)
 		return
@@ -92,16 +86,36 @@ func onNewConn(conn net.Conn) {
 		conn.Close()
 	}()
 
-	data := make([]byte, 1024)
+	var stage = 0 // 0: read header 1: read body
+	var readLen = 0
+	var header messsageHeader
+	reader := bufio.NewReader(conn)
 	for {
-		i, err := conn.Read(data)
+		if stage == 0 {
+			readLen = binary.Size(header)
+		} else {
+			readLen = int(header.Len) - (binary.Size(header) - binary.Size(header.Len)) //len include some size of header
+		}
+
+		data := make([]byte, readLen)
+
+		// fmt.Printf("ReadFull readLen = %v reader.Buffered() %v\n", readLen, reader.Buffered())
+		_, err := io.ReadFull(reader, data)
 		if err != nil {
 			fmt.Println("读取客户端数据错误:", err.Error())
 			break
 		}
-		// fmt.Printf("connect read %d bytes\n", i)
 
-		parsePBData(data[:i])
+		if stage == 0 {
+			binary.Read(bytes.NewReader(data), binary.LittleEndian, &header)
+			fmt.Printf("parsePBData <- Cmd %v Seq %v Len %v\n", header.Cmd, header.Seq, header.Len)
+			stage = 1
+			continue
+		}
+
+		parsePBData(data)
+		stage = 0
+
 		conn.Write([]byte("Receive PB data from Client\n"))
 	}
 }
@@ -140,9 +154,10 @@ func startTCPClientForPB() {
 		return
 	}
 	defer conn.Close()
-	buf := fillPBData()
 
+	buf := fillPBData()
 	conn.Write(buf.Bytes())
+
 	reader := bufio.NewReader(conn)
 	msg, err := reader.ReadString('\n')
 	fmt.Printf("startTCPClientForPB: %s\n", msg)
