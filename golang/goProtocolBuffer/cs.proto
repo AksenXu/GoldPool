@@ -1,0 +1,13 @@
+syntax = "proto3";          //声明使用proto3协议
+
+package main;   //包名，通过protoc生成go文件
+
+enum MessageType {
+    GPSMESSAGE = 0;
+    PICMESSAGE = 1;
+}
+
+message DeviceGPSMessage{      //消息定义的关键字
+    int32 deviceid = 1;
+    int32 gpsdata = 2;
+}
