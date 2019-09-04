@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/golang/glog"
+
 	proto "github.com/golang/protobuf/proto"
 )
 
@@ -18,7 +20,7 @@ const (
 	productURL = "https://ugcaccess.map.qq.com"
 
 	getToken       = "/map_ugc/get_token"
-	registerDevice = "map_ugc/register_device"
+	registerDevice = "/map_ugc/register_device"
 
 	contentType = "application/x-www-form-urlencoded;charset=utf-8"
 
@@ -26,6 +28,12 @@ const (
 	tencentchannel = "3_9"
 	tencentAPPID   = "device_pufangda_cloud"
 )
+
+// TencentDSCommonRsp ...
+type TencentDSCommonRsp struct {
+	code int
+	msg  string
+}
 
 // TencentDataServer ...
 type TencentDataServer struct {
@@ -38,7 +46,8 @@ func md5sum(in string) string {
 	return hex.EncodeToString(cipherBytes)
 }
 
-func sendHttpsRequest(url string, data []byte) ([]byte, error) {
+//FIXME: use keepalive connection
+func sendHTTPSRequest(url string, data []byte) ([]byte, error) {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -46,7 +55,7 @@ func sendHttpsRequest(url string, data []byte) ([]byte, error) {
 
 	resp, err := client.Post(url, contentType, bytes.NewReader(data))
 	if err != nil {
-		fmt.Println("client.Post error:", err)
+		glog.Errorf("client.Post error: %v", err)
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -56,8 +65,7 @@ func sendHttpsRequest(url string, data []byte) ([]byte, error) {
 }
 
 // GetToken ...
-func (c *TencentDataServer) GetToken(deviceID string) error {
-
+func (c *TencentDataServer) GetToken(deviceID string) (string, int32, error) {
 	channel := tencentchannel
 	t := uint64(time.Now().UnixNano() / 1000000)
 
@@ -67,7 +75,7 @@ func (c *TencentDataServer) GetToken(deviceID string) error {
 	sc += tencentchannel
 	sc += fmt.Sprintf("%d", t)
 	m := md5sum(sc)
-	fmt.Printf("GetToken sc = %v => md5 %v\n", sc, m)
+	glog.Infof("GetToken: sc = %v => md5 %v\n", sc, m)
 
 	var req GetTokenReq
 	req.DeviceId = &deviceID
@@ -77,23 +85,64 @@ func (c *TencentDataServer) GetToken(deviceID string) error {
 
 	data, err := proto.Marshal(&req)
 	if err != nil {
-		fmt.Printf("ProtocolBuffer Marshal failed %v", err)
-		return err
+		glog.Errorf("GetToken: ProtocolBuffer Marshal failed %v", err)
+		return "", 0, err
 	}
 
-	resp, err := sendHttpsRequest(developURL+getToken, data)
+	//FIXME: use the productURL
+	resp, err := sendHTTPSRequest(developURL+getToken, data)
 	if err != nil {
-		fmt.Printf("sendHttpsRequest failed %v", err)
-		return err
+		glog.Errorf("GetToken: sendHTTPSRequest failed %v", err)
+		return "", 0, err
 	}
 
 	rsp := &GetTokenRsp{}
 	err = proto.Unmarshal(resp, rsp)
 	if err != nil {
-		fmt.Printf("unmarshaling error: %v resp %v\n", err, resp)
-		return err
+		glog.Errorf("GetToken: unmarshaling error: %v resp %v\n", err, resp)
+		return "", 0, err
 	}
 
-	fmt.Printf("GetToken: code %v msg %v token %v expired_time %v\n", rsp.GetCode(), rsp.GetMsg(), rsp.GetToken(), rsp.GetExpiredTime())
-	return nil
+	glog.Infof("GetToken: code %v msg %v token %v expired_time %v\n", rsp.GetCode(), rsp.GetMsg(), rsp.GetToken(), rsp.GetExpiredTime())
+	return rsp.GetToken(), rsp.GetCode(), nil
+}
+
+// RegisterDevice ...
+func (c *TencentDataServer) RegisterDevice(info *DeviceInfo, token string) (string, int32, error) {
+	channel := tencentchannel
+	t := uint64(time.Now().UnixNano() / 1000000)
+	sc := token
+	sc += fmt.Sprintf("%d", t)
+	checker := md5sum(sc)
+
+	var req RegisterThirdPartyReq
+	req.DeviceId = &info.DeviceID
+	req.Channel = &channel
+	req.Ts = &t
+	req.Checker = &checker
+	req.Imei = &info.Imei
+
+	data, err := proto.Marshal(&req)
+	if err != nil {
+		glog.Errorf("RegisterDevice: Marshal error %v", err)
+		return "", 0, err
+	}
+
+	//FIXME: use the productURL
+	resp, err := sendHTTPSRequest(developURL+registerDevice, data)
+	if err != nil {
+		glog.Errorf("RegisterDevice: sendHTTPSRequest error %v", err)
+		return "", 0, err
+	}
+
+	rsp := &RegisterThirdPartyRsp{}
+	err = proto.Unmarshal(resp, rsp)
+	if err != nil {
+		glog.Errorf("RegisterDevice: unmarshaling error %v resp %v\n", err, resp)
+		return "", 0, err
+	}
+
+	glog.Infof("RegisterDevice: code %v msg %v deviceID %v\n",
+		rsp.GetCode(), rsp.GetMsg(), rsp.GetDeviceId())
+	return rsp.GetDeviceId(), rsp.GetCode(), nil
 }
