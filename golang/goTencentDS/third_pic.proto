@@ -1,0 +1,24 @@
+syntax = "proto2";
+package main;
+
+message PicReq {
+    required string device_id = 1;  //设备id
+    required uint64 order_id = 2;   // 订单号
+    repeated string image_info = 3; // 截帧时间戳集合
+    required string expire_time = 4;// 过期时间
+    required string client_id = 5 ; // 发送方
+    optional string host = 6;       //照片回传host
+
+    message ImageInfo {
+        required string timestamp = 1; //照片时间戳
+        required string uri = 2; //照片回传uri
+        required string auth = 3; // 照片回传签名
+    }
+
+    repeated ImageInfo image_detail_list = 7; //截帧时间戳详情集合
+}
+
+message PicRsp {
+    required int32 code = 1; // 0:成功 1:失败
+    required string msg = 2; // 失败的消息
+}

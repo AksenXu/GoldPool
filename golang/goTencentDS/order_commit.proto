@@ -1,0 +1,42 @@
+syntax = "proto2";
+package main;
+message OrderCommit {
+    required string device_id = 1;
+    required string version   = 2;
+    optional string ext       = 3;
+
+    message Order {
+        required uint64 order_id         = 1;
+        required string image_url_prefix = 2;       //任务对应图片 url 前缀 信息
+
+        message OrderPhoto {
+            repeated uint64 success_gps_time = 1;   //截屏成功的 GPS 时间，单位毫 秒
+            repeated uint64 fail_gps_time = 2;      //截屏失败的 GPS 时间，单位毫 秒, 已废弃，不应该传入
+            repeated uint64 video_lost_gps_time = 3;     // 视频不存在
+            repeated uint64 video_deleted_gps_time = 4;  // 视频被删除
+            repeated uint64 framed_failed_gps_time = 5;  // 视频截帧失败
+            repeated uint64 upload_failed_gps_time = 6;  // 上传失败
+            repeated uint64 unknown_reason_gps_time = 7; // 未知原因
+        }
+        required OrderPhoto order_photos = 3;       //任务对应图片信息数组
+
+        optional uint64 order_stream = 4;   //订单流量统计单位B
+        optional uint64 image_stream = 5;   //照片总计大小统计单位B
+        repeated string third_image_url_suffix = 6; // 照片url后缀
+        optional string image_sign = 7;     //照片下载签名
+    }
+    repeated Order orders     = 4;
+}
+
+message OrderCommitResp {
+    required int32 code = 1; // 0 全部提交成功 -1 部分提交成功 -2 全部失败
+    required string device_id  = 2;
+    required string msg = 3;
+
+    message OrderResp {
+        required uint64  order_id    = 1;
+        required int32 commit_status = 2; // 0 on succ otherwise fail
+        required string     msg      = 3;
+    }
+    repeated OrderResp order_resps = 4;
+}

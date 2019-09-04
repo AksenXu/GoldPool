@@ -1,0 +1,59 @@
+syntax = "proto2";
+package main;
+
+message ThirdTrackInfo{
+    enum LocationType {
+        Gps = 0;
+        WIFI = 1;
+    }
+    enum LocationMode {
+        D3=0;
+        D2=1;
+    }
+    enum CoordinateType {
+        WGS84=0;
+        GCJ02=1;
+    }
+
+    required int64 gps_time = 1;
+    required double latitude = 2;
+    required double longitude = 3;
+    required double altitude = 4;
+    required double accuracy = 5;
+    required double gps_bearing = 6;
+    required double speed = 7;
+    required LocationType location_type = 8;
+    required LocationMode location_mode = 9;
+    required CoordinateType coordinate_type = 10;
+    optional double v_dop = 11;
+    optional double h_dop = 12;
+    optional int32 star_num = 13;
+    optional int64 system_time=14;
+    optional int32 phone_direction = 15;
+    optional bool is_mock_gps = 16;
+}
+
+message ThirdTrackReport{
+    required string ak = 1; //每一个ak对应一个客户
+    required int32 service_id = 2; //轨迹消息ID
+    required string facility_id = 3; //设备id,唯一标识
+    repeated ThirdTrackInfo tracks   = 4; // 传过来的轨迹点序列
+    required int32 pb_version = 5;
+    required int32 start_time = 6; //轨迹开始定位时间，对应轨迹点时间字段最小值
+    required int32 end_time = 7; //轨迹开始定位时间，对应轨迹点时间字段最小值
+}
+
+message ThirdTrackResp{
+    required int32 errno = 1;
+    required string msg = 2;
+    required string facility_id = 3;
+    required int32 service_id = 4;
+}
+
+//private message between device and pfd cloud server
+//the data will be re-packed to tencent/baidu/gaode data format
+message TrackData{
+    repeated ThirdTrackInfo tracks = 1; // 传过来的轨迹点序列
+    required int32 start_time = 2; //轨迹开始定位时间，对应轨迹点时间字段最小值
+    required int32 end_time = 3; //轨迹开始定位时间，对应轨迹点时间字段最小值
+}

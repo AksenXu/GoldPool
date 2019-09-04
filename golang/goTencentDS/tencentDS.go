@@ -19,14 +19,24 @@ const (
 	developURL = "https://thirdpartyaccess.sparta.html5.qq.com"
 	productURL = "https://ugcaccess.map.qq.com"
 
+	//FIXME: use the productURL
+	tencentURL = developURL
+
 	getToken       = "/map_ugc/get_token"
 	registerDevice = "/map_ugc/register_device"
+	trackReport    = "/map_ugc/track_report"
+	commintOrder   = "/map_ugc/commit_order"
+	flowReport     = "/map_ugc/flow_report"
 
 	contentType = "application/x-www-form-urlencoded;charset=utf-8"
 
 	//below two const from Tencent engineer
 	tencentchannel = "3_9"
 	tencentAPPID   = "device_pufangda_cloud"
+
+	//FIXME: need info from tencent
+	tencentAK        = ""
+	tencentServiceID = 10
 )
 
 // TencentDSCommonRsp ...
@@ -89,8 +99,7 @@ func (c *TencentDataServer) GetToken(deviceID string) (string, int32, error) {
 		return "", 0, err
 	}
 
-	//FIXME: use the productURL
-	resp, err := sendHTTPSRequest(developURL+getToken, data)
+	resp, err := sendHTTPSRequest(tencentURL+getToken, data)
 	if err != nil {
 		glog.Errorf("GetToken: sendHTTPSRequest failed %v", err)
 		return "", 0, err
@@ -115,21 +124,21 @@ func (c *TencentDataServer) RegisterDevice(info *DeviceInfo, token string) (stri
 	sc += fmt.Sprintf("%d", t)
 	checker := md5sum(sc)
 
-	var req RegisterThirdPartyReq
-	req.DeviceId = &info.DeviceID
-	req.Channel = &channel
-	req.Ts = &t
-	req.Checker = &checker
-	req.Imei = &info.Imei
+	req := &RegisterThirdPartyReq{
+		DeviceId: &info.DeviceID,
+		Channel:  &channel,
+		Ts:       &t,
+		Checker:  &checker,
+		Imei:     &info.Imei,
+	}
 
-	data, err := proto.Marshal(&req)
+	data, err := proto.Marshal(req)
 	if err != nil {
 		glog.Errorf("RegisterDevice: Marshal error %v", err)
 		return "", 0, err
 	}
 
-	//FIXME: use the productURL
-	resp, err := sendHTTPSRequest(developURL+registerDevice, data)
+	resp, err := sendHTTPSRequest(tencentURL+registerDevice, data)
 	if err != nil {
 		glog.Errorf("RegisterDevice: sendHTTPSRequest error %v", err)
 		return "", 0, err
@@ -145,4 +154,105 @@ func (c *TencentDataServer) RegisterDevice(info *DeviceInfo, token string) (stri
 	glog.Infof("RegisterDevice: code %v msg %v deviceID %v\n",
 		rsp.GetCode(), rsp.GetMsg(), rsp.GetDeviceId())
 	return rsp.GetDeviceId(), rsp.GetCode(), nil
+}
+
+// TrackReport ...
+func (c *TencentDataServer) TrackReport(trackdata *TrackData, deviceID string) (int32, error) {
+	ak := tencentAK
+	var pbversion int32 = 1
+	var si int32 = tencentServiceID
+
+	var req ThirdTrackReport
+	req.Ak = &ak
+	req.ServiceId = &si
+	req.FacilityId = &deviceID
+	req.Tracks = trackdata.Tracks
+	req.StartTime = trackdata.StartTime
+	req.EndTime = trackdata.EndTime
+	req.PbVersion = &pbversion
+
+	pb, err := proto.Marshal(&req)
+	if err != nil {
+		glog.Errorf("TrackReport: Marshal error %v", err)
+		return 0, err
+	}
+
+	resp, err := sendHTTPSRequest(tencentURL+trackReport, pb)
+	if err != nil {
+		glog.Errorf("TrackReport: sendHTTPSRequest error %v", err)
+		return 0, err
+	}
+
+	rsp := &ThirdTrackResp{}
+	err = proto.Unmarshal(resp, rsp)
+	if err != nil {
+		glog.Errorf("TrackReport: unmarshaling error %v resp %v\n", err, resp)
+		return 0, err
+	}
+
+	glog.Infof("TrackReport: errno %v msg %v serviceID %v deviceID %v\n",
+		rsp.GetErrno(), rsp.GetMsg(), rsp.GetServiceId(), rsp.GetFacilityId())
+	return rsp.GetErrno(), nil
+}
+
+// CommitOrder ...
+func (c *TencentDataServer) CommitOrder(deviceID string, version string, orders []*OrderCommit_Order) (int32, error) {
+	req := &OrderCommit{
+		DeviceId: &deviceID,
+		Version:  &version,
+		Orders:   orders,
+	}
+
+	data, err := proto.Marshal(req)
+	if err != nil {
+		glog.Errorf("CommitOrder: Marshal error %v", err)
+		return 0, err
+	}
+
+	resp, err := sendHTTPSRequest(tencentURL+flowReport, data)
+	if err != nil {
+		glog.Errorf("CommitOrder: sendHTTPSRequest error %v", err)
+		return 0, err
+	}
+
+	rsp := &OrderCommitResp_OrderResp{}
+	err = proto.Unmarshal(resp, rsp)
+	if err != nil {
+		glog.Errorf("CommitOrder: unmarshaling error %v resp %v\n", err, resp)
+		return 0, err
+	}
+
+	glog.Infof("CommitOrder: status %v msg %v orderid %v\n",
+		rsp.GetCommitStatus(), rsp.GetMsg(), rsp.GetOrderId())
+	return rsp.GetCommitStatus(), nil
+}
+
+// FlowReport ...
+func (c *TencentDataServer) FlowReport(flows []*ThirdFlowReportReq_DeviceFlow) (int32, error) {
+	req := &ThirdFlowReportReq{
+		DeviceFlows: flows,
+	}
+
+	data, err := proto.Marshal(req)
+	if err != nil {
+		glog.Errorf("FlowReport: Marshal error %v", err)
+		return 0, err
+	}
+
+	resp, err := sendHTTPSRequest(tencentURL+flowReport, data)
+	if err != nil {
+		glog.Errorf("FlowReport: sendHTTPSRequest error %v", err)
+		return 0, err
+	}
+
+	rsp := &ThirdFlowReportRsp{}
+	err = proto.Unmarshal(resp, rsp)
+	if err != nil {
+		glog.Errorf("FlowReport: unmarshaling error %v resp %v\n", err, resp)
+		return 0, err
+	}
+
+	glog.Infof("FlowReport: code %v msg %v\n",
+		rsp.GetCode(), rsp.GetMsg())
+	return rsp.GetCode(), nil
 }
