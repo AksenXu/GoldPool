@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AndroidAPIUsage</string>
+    <string name="mediarecord">MediaRecord</string>
 </resources>

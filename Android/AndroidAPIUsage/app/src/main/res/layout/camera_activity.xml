@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent">
+    <TextView
+            android:id="@+id/mr_title"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="20sp"
+            android:text="@string/mediarecord"
+            android:layout_marginTop="20dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+    />
+
+    <FrameLayout
+            android:id="@+id/mediaLayout"
+            android:layout_height="300dp"
+            android:layout_width="match_parent"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@id/mr_title">
+
+        <SurfaceView
+                android:id="@+id/cameraView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible"/>
+
+        <VideoView
+                android:id="@+id/videoView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible"/>
+    </FrameLayout>
+
+    <Button
+            android:id="@+id/startRecord"
+            app:layout_constraintTop_toBottomOf="@id/mediaLayout"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:text="开始录像"
+            android:textSize="20dp"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"/>
+
+    <Button
+            android:id="@+id/stopRecord"
+            app:layout_constraintTop_toBottomOf="@id/mediaLayout"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:text="停止录像"
+            android:textSize="20dp"
+            android:layout_width="150dp"
+            android:layout_height="50dp"/>
+
+    <Button
+            android:id="@+id/startPlay"
+            app:layout_constraintTop_toBottomOf="@id/startRecord"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:text="开始播放"
+            android:textSize="20dp"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"/>
+
+    <Button
+            android:id="@+id/stopPlay"
+            app:layout_constraintTop_toBottomOf="@id/stopRecord"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:text="停止播放"
+            android:textSize="20dp"
+            android:layout_width="150dp"
+            android:layout_height="50dp"/>
+
+</android.support.constraint.ConstraintLayout>
