@@ -1,0 +1,218 @@
+
+/ # 
+/ # 
+/ # 
+/ # 
+/ # fg
+logcat | grep carmedia
+^Z[1]+  Stopped                    logcat | grep carmedia
+/ # bg
+[1] logcat | grep carmedia
+/ # pm disable com.car.dvr
+Package com.car.dvr new state: disabled
+/ # pm 
+/ # uvc_test.test 
+05-18 10:03:59.956 D/WLogger (12544): set log prefix to carmedia_
+05-18 10:03:59.957 I/carmedia_UsbCam(12544): USBCam 0xb71d6108 create
+05-18 10:03:59.957 I/carmedia_JpegUSBCam(12544): JpegUSBCam 0xb71d6108 create
+05-18 10:03:59.957 I/carmedia_UsbCam(12544): setCamFormat width 640 height 480 fps 15 format 1196444237
+05-18 10:03:59.957 I/carmedia_UsbCam(12544): initDevice USBCam width 640, height 480 fps 15 format MJPG
+05-18 10:03:59.957 D/carmedia_UsbCam(12544): sys.usb.camnode property : /dev/video0
+05-18 10:03:59.957 I/carmedia_UsbCam(12544): USB Camera /dev/video0 opened: miCameraID(2) mVideoFd(7)
+05-18 10:03:59.957 D/carmedia_UsbCam(12544): Capability Informations:
+05-18 10:03:59.957 D/carmedia_UsbCam(12544): driver:uvcvideo, card:Laptop_Integrated_Webcam_FHD, bus_info:usb-musb-hdrc.0.auto-1, version:00030A36
+05-18 10:03:59.957 E/carmedia_UsbCam(12544): device does not support set crop
+05-18 10:03:59.957 D/carmedia_UsbCam(12544): YUYV, 640x480, 15fps
+05-18 10:03:59.957 D/carmedia_UsbCam(12544): YUYV, 640x480, 10fps
+05-18 10:03:59.957 D/carmedia_UsbCam(12544): YUYV, 640x480, 5fps
+05-18 10:03:59.957 D/carmedia_UsbCam(12544): YUYV, 640x480
+05-18 10:03:59.957 D/carmedia_UsbCam(12544): YUYV, 1280x720, 9fps
+05-18 10:03:59.957 D/carmedia_UsbCam(12544): YUYV, 1280x720, 5fps
+05-18 10:03:59.957 D/carmedia_UsbCam(12544): YUYV, 1280x720
+05-18 10:03:59.957 D/carmedia_UsbCam(12544): YUYV, 352x288, 15fps
+05-18 10:03:59.957 D/carmedia_UsbCam(12544): YUYV, 352x288, 10fps
+05-18 10:03:59.957 D/carmedia_UsbCam(12544): YUYV, 352x288, 5fps
+05-18 10:03:59.957 D/carmedia_UsbCam(12544): YUYV, 352x288
+05-18 10:03:59.957 D/carmedia_UsbCam(12544): YUYV, 320x240, 15fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): YUYV, 320x240, 10fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): YUYV, 320x240, 5fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): YUYV, 320x240
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): YUYV, 176x144, 15fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): YUYV, 176x144, 10fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): YUYV, 176x144, 5fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): YUYV, 176x144
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): YUYV, 160x120, 15fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): YUYV, 160x120, 10fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): YUYV, 160x120, 5fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): YUYV, 160x120
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 640x480, 15fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 640x480, 10fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 640x480, 5fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 640x480
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 1280x720, 15fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 1280x720, 10fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 1280x720, 5fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 1280x720
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 352x288, 15fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 352x288, 10fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 352x288, 5fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 352x288
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 320x240, 15fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 320x240, 10fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 320x240, 5fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 320x240
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 176x144, 15fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 176x144, 10fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 176x144, 5fps
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 176x144
+05-18 10:03:59.958 D/carmedia_UsbCam(12544): MJPG, 160x120, 15fps
+05-18 10:03:59.959 D/carmedia_UsbCam(12544): MJPG, 160x120, 10fps
+05-18 10:03:59.959 D/carmedia_UsbCam(12544): MJPG, 160x120, 5fps
+05-18 10:03:59.959 D/carmedia_UsbCam(12544): MJPG, 160x120
+05-18 10:04:00.011 D/carmedia_UsbCam(12544): USB Camera Use Format:
+05-18 10:04:00.011 D/carmedia_UsbCam(12544): type:1, width:640, height:480, format:MJPG, field:1, fps:15
+05-18 10:04:00.066 D/carmedia_UsbCam(12544): UVC mmap 0: addr[0xb6e4a000] len[614989]
+05-18 10:04:00.067 D/carmedia_UsbCam(12544): UVC mmap 1: addr[0xb6db3000] len[614989]
+05-18 10:04:00.068 D/carmedia_UsbCam(12544): UVC mmap 2: addr[0xb6d1c000] len[614989]
+05-18 10:04:00.068 I/carmedia_UsbCam(12544): initDevice done mVideoFd = 7
+05-18 10:04:00.068 D/carmedia_UsbCam(12544): startStreaming +
+05-18 10:04:00.068 I/carmedia_UsbCam(12544): startStreaming VIDIOC_QBUF 0 OK
+05-18 10:04:00.068 I/carmedia_UsbCam(12544): startStreaming VIDIOC_QBUF 1 OK
+05-18 10:04:00.068 I/carmedia_UsbCam(12544): startStreaming VIDIOC_QBUF 2 OK
+05-18 10:04:00.097 I/carmedia_UsbCam(12544): startStreaming VIDIOC_STREAMON OK
+05-18 10:04:00.097 D/carmedia_UsbCam(12544): startStreaming -
+05-18 10:04:01.715 D/carmedia_UsbCam(12544): UVC DQBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:01.716 D/carmedia_UsbCam(12544): UVC QBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:01.716 I/carmedia_main(12544): got jpegSize 57488
+05-18 10:04:01.723 I/carmedia_main(12544): writeFile /storage/sdcard0/jpeg_0.jpg size 57488 OK
+05-18 10:04:01.777 D/carmedia_UsbCam(12544): UVC DQBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:01.777 D/carmedia_UsbCam(12544): UVC QBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:01.781 I/carmedia_main(12544): got jpegSize 57520
+05-18 10:04:01.835 D/carmedia_UsbCam(12544): UVC DQBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:01.835 D/carmedia_UsbCam(12544): UVC QBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:01.847 I/carmedia_main(12544): got jpegSize 63256
+05-18 10:04:01.896 D/carmedia_UsbCam(12544): UVC DQBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:01.897 D/carmedia_UsbCam(12544): UVC QBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:01.914 I/carmedia_main(12544): got jpegSize 63568
+05-18 10:04:01.954 D/carmedia_UsbCam(12544): UVC DQBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:01.954 D/carmedia_UsbCam(12544): UVC QBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:01.980 I/carmedia_main(12544): got jpegSize 58424
+05-18 10:04:02.017 D/carmedia_UsbCam(12544): UVC DQBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:02.017 D/carmedia_UsbCam(12544): UVC QBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:02.045 I/carmedia_main(12544): got jpegSize 58592
+05-18 10:04:02.073 D/carmedia_UsbCam(12544): UVC DQBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:02.074 D/carmedia_UsbCam(12544): UVC QBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:02.112 I/carmedia_main(12544): got jpegSize 67288
+05-18 10:04:02.135 D/carmedia_UsbCam(12544): UVC DQBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:02.135 D/carmedia_UsbCam(12544): UVC QBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:02.177 I/carmedia_main(12544): got jpegSize 67496
+05-18 10:04:02.197 D/carmedia_UsbCam(12544): UVC DQBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:02.197 D/carmedia_UsbCam(12544): UVC QBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:02.243 I/carmedia_main(12544): got jpegSize 63480
+05-18 10:04:02.254 D/carmedia_UsbCam(12544): UVC DQBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:02.254 D/carmedia_UsbCam(12544): UVC QBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:02.309 I/carmedia_main(12544): got jpegSize 63648
+05-18 10:04:02.316 D/carmedia_UsbCam(12544): UVC DQBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:02.316 D/carmedia_UsbCam(12544): UVC QBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:02.375 I/carmedia_main(12544): got jpegSize 63976
+05-18 10:04:02.382 I/carmedia_main(12544): writeFile /storage/sdcard0/jpeg_10.jpg size 63976 OK
+05-18 10:04:02.382 D/carmedia_UsbCam(12544): UVC DQBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:02.382 D/carmedia_UsbCam(12544): UVC QBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:02.442 I/carmedia_main(12544): got jpegSize 63680
+05-18 10:04:02.442 D/carmedia_UsbCam(12544): UVC DQBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:02.442 D/carmedia_UsbCam(12544): UVC QBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:02.507 I/carmedia_main(12544): got jpegSize 63880
+05-18 10:04:02.507 D/carmedia_UsbCam(12544): UVC DQBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:02.507 D/carmedia_UsbCam(12544): UVC QBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:02.508 I/carmedia_main(12544): got jpegSize 63408
+05-18 10:04:02.554 D/carmedia_UsbCam(12544): UVC DQBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:02.555 D/carmedia_UsbCam(12544): UVC QBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:02.574 I/carmedia_main(12544): got jpegSize 63560
+05-18 10:04:02.616 D/carmedia_UsbCam(12544): UVC DQBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:02.616 D/carmedia_UsbCam(12544): UVC QBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:02.640 I/carmedia_main(12544): got jpegSize 63448
+05-18 10:04:02.674 D/carmedia_UsbCam(12544): UVC DQBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:02.674 D/carmedia_UsbCam(12544): UVC QBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:02.705 I/carmedia_main(12544): got jpegSize 63592
+05-18 10:04:02.736 D/carmedia_UsbCam(12544): UVC DQBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:02.736 D/carmedia_UsbCam(12544): UVC QBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:02.771 I/carmedia_main(12544): got jpegSize 63520
+05-18 10:04:02.793 D/carmedia_UsbCam(12544): UVC DQBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:02.794 D/carmedia_UsbCam(12544): UVC QBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:02.838 I/carmedia_main(12544): got jpegSize 63296
+05-18 10:04:02.855 D/carmedia_UsbCam(12544): UVC DQBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:02.855 D/carmedia_UsbCam(12544): UVC QBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:02.903 I/carmedia_main(12544): got jpegSize 63408
+05-18 10:04:02.912 D/carmedia_UsbCam(12544): UVC DQBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:02.912 D/carmedia_UsbCam(12544): UVC QBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:02.969 I/carmedia_main(12544): got jpegSize 63312
+05-18 10:04:02.979 I/carmedia_main(12544): writeFile /storage/sdcard0/jpeg_20.jpg size 63312 OK
+05-18 10:04:02.981 D/carmedia_UsbCam(12544): UVC DQBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:02.982 D/carmedia_UsbCam(12544): UVC QBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:03.035 I/carmedia_main(12544): got jpegSize 63304
+05-18 10:04:03.036 D/carmedia_UsbCam(12544): UVC DQBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:03.036 D/carmedia_UsbCam(12544): UVC QBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:03.036 I/carmedia_main(12544): got jpegSize 63632
+05-18 10:04:03.092 D/carmedia_UsbCam(12544): UVC DQBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:03.092 D/carmedia_UsbCam(12544): UVC QBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:03.102 I/carmedia_main(12544): got jpegSize 63336
+05-18 10:04:03.153 D/carmedia_UsbCam(12544): UVC DQBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:03.153 D/carmedia_UsbCam(12544): UVC QBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:03.167 I/carmedia_main(12544): got jpegSize 63392
+05-18 10:04:03.215 D/carmedia_UsbCam(12544): UVC DQBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:03.215 D/carmedia_UsbCam(12544): UVC QBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:03.233 I/carmedia_main(12544): got jpegSize 63552
+05-18 10:04:03.272 D/carmedia_UsbCam(12544): UVC DQBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:03.272 D/carmedia_UsbCam(12544): UVC QBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:03.300 I/carmedia_main(12544): got jpegSize 63392
+05-18 10:04:03.334 D/carmedia_UsbCam(12544): UVC DQBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:03.334 D/carmedia_UsbCam(12544): UVC QBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:03.365 I/carmedia_main(12544): got jpegSize 63424
+05-18 10:04:03.392 D/carmedia_UsbCam(12544): UVC DQBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:03.392 D/carmedia_UsbCam(12544): UVC QBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:03.431 I/carmedia_main(12544): got jpegSize 63216
+05-18 10:04:03.453 D/carmedia_UsbCam(12544): UVC DQBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:03.453 D/carmedia_UsbCam(12544): UVC QBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:03.498 I/carmedia_main(12544): got jpegSize 63400
+05-18 10:04:03.511 D/carmedia_UsbCam(12544): UVC DQBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:03.511 D/carmedia_UsbCam(12544): UVC QBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:03.563 I/carmedia_main(12544): got jpegSize 63496
+05-18 10:04:03.573 I/carmedia_main(12544): writeFile /storage/sdcard0/jpeg_30.jpg size 63496 OK
+05-18 10:04:03.574 D/carmedia_UsbCam(12544): UVC DQBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:03.576 D/carmedia_UsbCam(12544): UVC QBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:03.629 I/carmedia_main(12544): got jpegSize 63544
+05-18 10:04:03.635 D/carmedia_UsbCam(12544): UVC DQBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:03.635 D/carmedia_UsbCam(12544): UVC QBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:03.695 I/carmedia_main(12544): got jpegSize 63464
+05-18 10:04:03.695 D/carmedia_UsbCam(12544): UVC DQBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:03.695 D/carmedia_UsbCam(12544): UVC QBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:03.695 I/carmedia_main(12544): got jpegSize 63304
+05-18 10:04:03.753 D/carmedia_UsbCam(12544): UVC DQBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:03.753 D/carmedia_UsbCam(12544): UVC QBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:03.761 I/carmedia_main(12544): got jpegSize 63312
+05-18 10:04:03.810 D/carmedia_UsbCam(12544): UVC DQBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:03.811 D/carmedia_UsbCam(12544): UVC QBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:03.828 I/carmedia_main(12544): got jpegSize 63712
+05-18 10:04:03.872 D/carmedia_UsbCam(12544): UVC DQBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:03.872 D/carmedia_UsbCam(12544): UVC QBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:03.893 I/carmedia_main(12544): got jpegSize 63320
+05-18 10:04:03.934 D/carmedia_UsbCam(12544): UVC DQBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:03.934 D/carmedia_UsbCam(12544): UVC QBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:03.959 I/carmedia_main(12544): got jpegSize 63448
+05-18 10:04:03.991 D/carmedia_UsbCam(12544): UVC DQBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:03.992 D/carmedia_UsbCam(12544): UVC QBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:04.026 I/carmedia_main(12544): got jpegSize 63512
+05-18 10:04:04.053 D/carmedia_UsbCam(12544): UVC DQBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:04.053 D/carmedia_UsbCam(12544): UVC QBUF Index[0] Addr[0xb6e4a000]
+05-18 10:04:04.092 I/carmedia_main(12544): got jpegSize 63240
+05-18 10:04:04.111 D/carmedia_UsbCam(12544): UVC DQBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:04.111 D/carmedia_UsbCam(12544): UVC QBUF Index[1] Addr[0xb6db3000]
+05-18 10:04:04.157 I/carmedia_main(12544): got jpegSize 63528
+05-18 10:04:04.162 I/carmedia_main(12544): writeFile /storage/sdcard0/jpeg_40.jpg size 63528 OK
+05-18 10:04:04.171 D/carmedia_UsbCam(12544): UVC DQBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:04.172 D/carmedia_UsbCam(12544): UVC QBUF Index[2] Addr[0xb6d1c000]
+05-18 10:04:04.224 I/carmedia_main(12544): got jpegSize 63752
+^C
+/ # 
+/ # 
+/ # 
