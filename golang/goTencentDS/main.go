@@ -92,6 +92,8 @@ func testTrackReport() {
 		glog.Errorf("TrackReport deviceID %v failed error %v code %v", testDeviceID, err, errno)
 		return
 	}
+
+	glog.Infof("testTrackReport OK")
 }
 
 func testCommitOrder() {
@@ -120,19 +122,19 @@ func testFlowReport() {
 		glog.Errorf("FlowReport deviceID %v failed error %v code %v", testDeviceID, err, errno)
 		return
 	}
-	glog.Infof("testFlowReport OK errno %v", errno)
+	glog.Infof("testFlowReport OK")
 }
 
 func main() {
 
-	// token := testGetToken()
-	// testRegisterDevice(token)
+	token := testGetToken()
+	testRegisterDevice(token)
 
 	//need test
 	testTrackReport()
 
 	// testCommitOrder()
 
-	// testFlowReport()
+	testFlowReport()
 	return
 }

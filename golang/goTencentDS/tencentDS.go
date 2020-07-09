@@ -34,9 +34,10 @@ const (
 	tencentchannel = "3_9"
 	tencentAPPID   = "device_pufangda_cloud"
 
-	//FIXME: need info from tencent
-	tencentAK        = ""
-	tencentServiceID = 10
+	//AK is the same with tencentChannel
+	//ServiceID is the last number of channel
+	tencentAK        = "3_9"
+	tencentServiceID = 9
 )
 
 // TencentDSCommonRsp ...
@@ -74,34 +75,42 @@ func sendHTTPSRequest(url string, data []byte) ([]byte, error) {
 	return body, err
 }
 
-// GetToken ...
+func (c *TencentDataServer) marshalDataAndSend(pb proto.Message, cmd string) ([]byte, error) {
+	data, err := proto.Marshal(pb)
+	if err != nil {
+		glog.Errorf("marshalDataAndSend: ProtocolBuffer Marshal failed %v", err)
+		return nil, err
+	}
+
+	resp, err := sendHTTPSRequest(tencentURL+cmd, data)
+	if err != nil {
+		glog.Errorf("marshalDataAndSend: sendHTTPSRequest failed %v", err)
+		return nil, err
+	}
+
+	return resp, err
+}
+
+// GetToken 腾讯众包侧提供 app_id、channel，三方侧访问 GetToken 接口获取 token。
 func (c *TencentDataServer) GetToken(deviceID string) (string, int32, error) {
 	channel := tencentchannel
 	t := uint64(time.Now().UnixNano() / 1000000)
 
 	// app_secret string Y app_id + device_id + channel + ts 依次拼接为字符串，计算其 md5
-	var sc = tencentAPPID
-	sc += deviceID
-	sc += tencentchannel
-	sc += fmt.Sprintf("%d", t)
+	var sc = tencentAPPID + deviceID + tencentchannel + fmt.Sprintf("%d", t)
 	m := md5sum(sc)
 	glog.Infof("GetToken: sc = %v => md5 %v\n", sc, m)
 
-	var req GetTokenReq
-	req.DeviceId = &deviceID
-	req.Channel = &channel
-	req.Ts = &t
-	req.AppSecret = &m
-
-	data, err := proto.Marshal(&req)
-	if err != nil {
-		glog.Errorf("GetToken: ProtocolBuffer Marshal failed %v", err)
-		return "", 0, err
+	req := GetTokenReq{
+		DeviceId:  &deviceID,
+		Channel:   &channel,
+		Ts:        &t,
+		AppSecret: &m,
 	}
 
-	resp, err := sendHTTPSRequest(tencentURL+getToken, data)
+	resp, err := c.marshalDataAndSend(&req, getToken)
 	if err != nil {
-		glog.Errorf("GetToken: sendHTTPSRequest failed %v", err)
+		glog.Errorf("GetToken: marshalDataAndSend failed %v", err)
 		return "", 0, err
 	}
 
@@ -116,15 +125,14 @@ func (c *TencentDataServer) GetToken(deviceID string) (string, int32, error) {
 	return rsp.GetToken(), rsp.GetCode(), nil
 }
 
-// RegisterDevice ...
+// RegisterDevice 腾讯众包侧根据业务请求体中的 token 做权限校验，当权限校验失败，三方侧需重新获取 token 并保存。
 func (c *TencentDataServer) RegisterDevice(info *DeviceInfo, token string) (string, int32, error) {
 	channel := tencentchannel
 	t := uint64(time.Now().UnixNano() / 1000000)
-	sc := token
-	sc += fmt.Sprintf("%d", t)
+	sc := token + fmt.Sprintf("%d", t)
 	checker := md5sum(sc)
 
-	req := &RegisterThirdPartyReq{
+	req := RegisterThirdPartyReq{
 		DeviceId: &info.DeviceID,
 		Channel:  &channel,
 		Ts:       &t,
@@ -132,15 +140,9 @@ func (c *TencentDataServer) RegisterDevice(info *DeviceInfo, token string) (stri
 		Imei:     &info.Imei,
 	}
 
-	data, err := proto.Marshal(req)
+	resp, err := c.marshalDataAndSend(&req, registerDevice)
 	if err != nil {
-		glog.Errorf("RegisterDevice: Marshal error %v", err)
-		return "", 0, err
-	}
-
-	resp, err := sendHTTPSRequest(tencentURL+registerDevice, data)
-	if err != nil {
-		glog.Errorf("RegisterDevice: sendHTTPSRequest error %v", err)
+		glog.Errorf("RegisterDevice: marshalDataAndSend failed %v", err)
 		return "", 0, err
 	}
 
@@ -162,24 +164,19 @@ func (c *TencentDataServer) TrackReport(trackdata *TrackData, deviceID string) (
 	var pbversion int32 = 1
 	var si int32 = tencentServiceID
 
-	var req ThirdTrackReport
-	req.Ak = &ak
-	req.ServiceId = &si
-	req.FacilityId = &deviceID
-	req.Tracks = trackdata.Tracks
-	req.StartTime = trackdata.StartTime
-	req.EndTime = trackdata.EndTime
-	req.PbVersion = &pbversion
-
-	pb, err := proto.Marshal(&req)
-	if err != nil {
-		glog.Errorf("TrackReport: Marshal error %v", err)
-		return 0, err
+	req := ThirdTrackReport{
+		Ak:         &ak,
+		ServiceId:  &si,
+		FacilityId: &deviceID,
+		Tracks:     trackdata.Tracks,
+		StartTime:  trackdata.StartTime,
+		EndTime:    trackdata.EndTime,
+		PbVersion:  &pbversion,
 	}
 
-	resp, err := sendHTTPSRequest(tencentURL+trackReport, pb)
+	resp, err := c.marshalDataAndSend(&req, trackReport)
 	if err != nil {
-		glog.Errorf("TrackReport: sendHTTPSRequest error %v", err)
+		glog.Errorf("TrackReport: marshalDataAndSend failed %v", err)
 		return 0, err
 	}
 
@@ -197,21 +194,15 @@ func (c *TencentDataServer) TrackReport(trackdata *TrackData, deviceID string) (
 
 // CommitOrder ...
 func (c *TencentDataServer) CommitOrder(deviceID string, version string, orders []*OrderCommit_Order) (int32, error) {
-	req := &OrderCommit{
+	req := OrderCommit{
 		DeviceId: &deviceID,
 		Version:  &version,
 		Orders:   orders,
 	}
 
-	data, err := proto.Marshal(req)
+	resp, err := c.marshalDataAndSend(&req, commintOrder)
 	if err != nil {
-		glog.Errorf("CommitOrder: Marshal error %v", err)
-		return 0, err
-	}
-
-	resp, err := sendHTTPSRequest(tencentURL+flowReport, data)
-	if err != nil {
-		glog.Errorf("CommitOrder: sendHTTPSRequest error %v", err)
+		glog.Errorf("TrackReport: marshalDataAndSend failed %v", err)
 		return 0, err
 	}
 
@@ -229,19 +220,13 @@ func (c *TencentDataServer) CommitOrder(deviceID string, version string, orders 
 
 // FlowReport ...
 func (c *TencentDataServer) FlowReport(flows []*ThirdFlowReportReq_DeviceFlow) (int32, error) {
-	req := &ThirdFlowReportReq{
+	req := ThirdFlowReportReq{
 		DeviceFlows: flows,
 	}
 
-	data, err := proto.Marshal(req)
+	resp, err := c.marshalDataAndSend(&req, flowReport)
 	if err != nil {
-		glog.Errorf("FlowReport: Marshal error %v", err)
-		return 0, err
-	}
-
-	resp, err := sendHTTPSRequest(tencentURL+flowReport, data)
-	if err != nil {
-		glog.Errorf("FlowReport: sendHTTPSRequest error %v", err)
+		glog.Errorf("FlowReport: marshalDataAndSend failed %v", err)
 		return 0, err
 	}
 
