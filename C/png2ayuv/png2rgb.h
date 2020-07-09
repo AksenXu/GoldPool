@@ -33,11 +33,12 @@ struct AYUV
         memset(this, 0, sizeof(struct AYUV));
     }
     ~AYUV() {
-        free(vaddr);
+        free(ayuv_addr);
     }
-    unsigned char* vaddr;
+
+    unsigned char* ayuv_addr;
     unsigned char* yaddr;
-    
+
     //png resolution
     int width;
     int height;
@@ -53,6 +54,20 @@ struct AYUV
     
     //if alpha exist, pre-multiple the yuv data with alpha
     int preMultiple;
+};
+
+struct ARGB {
+    ARGB() {
+        memset(this, 0, sizeof(struct ARGB));
+    }
+    
+    unsigned char* argb_addr;
+    //png resolution
+    int width;
+    int height;
+    
+    int png_format;
+    int size;
 };
 
 /*
@@ -76,13 +91,13 @@ struct MainYUV
 };
 
 /**
- * Decode png picture memory to struct AYUV
- * @param[in] png: pointer to png memory
- *            len: png memory length
- * @param[out] ayuv: struct AYUV to store the AYUV info
+ * Decode png picture memory to struct ARGB
+ * @param[in] pngData: pointer to png memory
+ *            pngLen: png memory length
+ * @param[out] argb: struct ARGB to store the ARGB info
  * @return 0: decode OK, -1: decode failed
  */
-int png_decode_to_ayuv(unsigned char* pngData, int pngLen, struct AYUV& ayuv);
+int png_decode_to_argb(unsigned char* pngData, int pngLen, struct ARGB& argb);
 
 /**
  * overlay AYUV to MainYUV

@@ -1,4 +1,4 @@
-#include "png2ayuv.h"
+#include "png2rgb.h"
 #include "libpng/png.h"
 
 // https://www.cnblogs.com/mengfanrong/p/3801583.html
@@ -26,7 +26,7 @@ pngReadCallback(png_structp png_ptr, png_bytep data, png_size_t length)
     }
 }
 
-int png_decode_to_ayuv(unsigned char* pngData, int pngLen, struct AYUV& ayuv)
+int png_decode_to_argb(unsigned char* pngData, int pngLen, struct ARGB& argb)
 {
     int ret = -1;
     png_byte        header[PNGSIGSIZE]   = {0}; 
@@ -66,12 +66,12 @@ int png_decode_to_ayuv(unsigned char* pngData, int pngLen, struct AYUV& ayuv)
         png_read_info(png_ptr, info_ptr);
 
         //查询图像信息
-        ayuv.width = png_get_image_width(png_ptr, info_ptr);
-        ayuv.height = png_get_image_height(png_ptr, info_ptr);
+        argb.width = png_get_image_width(png_ptr, info_ptr);
+        argb.height = png_get_image_height(png_ptr, info_ptr);
         png_byte bit_depth = png_get_bit_depth(png_ptr, info_ptr);
         png_uint_32 color_type = png_get_color_type(png_ptr, info_ptr);
 
-        AYUV_LOG("png_decode_to_ayuv: res %dx%d\n", ayuv.width, ayuv.height);
+        AYUV_LOG("png_decode_to_argb: png res %dx%d\n", argb.width, argb.height);
 
         //调色板格式的png图片，转化为RGB888的像素格式
         // force palette images to be expanded to 24-bit RGB
@@ -129,17 +129,17 @@ int png_decode_to_ayuv(unsigned char* pngData, int pngLen, struct AYUV& ayuv)
         //按行读取png信息，
         // read png pngData
         png_size_t rowbytes;
-        png_bytep* row_pointers = (png_bytep*)malloc( sizeof(png_bytep) * ayuv.height );
+        png_bytep* row_pointers = (png_bytep*)malloc( sizeof(png_bytep) * argb.height );
 
         //获取每一行像素的字节数量
         rowbytes = png_get_rowbytes(png_ptr, info_ptr);
 
         //申请内存地址
-        ayuv.size = rowbytes * ayuv.height;
-        AYUV_LOG("png_decode_to_ayuv: rowbytes %lu ayuv.height %d ayuv.size %d\n", rowbytes, ayuv.height, ayuv.size);
+        argb.size = rowbytes * argb.height;
+        AYUV_LOG("png_decode_to_ayuv: rowbytes %lu ayuv.height %d ayuv.size %d\n", rowbytes, argb.height, argb.size);
 
-        ayuv.vaddr = static_cast<unsigned char*>(malloc(ayuv.size * sizeof(unsigned char)));
-        if (!ayuv.vaddr)
+        argb.argb_addr = static_cast<unsigned char*>(malloc(argb.size * sizeof(unsigned char)));
+        if (!argb.argb_addr)
         {
             if (row_pointers != NULL)
             {
@@ -148,9 +148,9 @@ int png_decode_to_ayuv(unsigned char* pngData, int pngLen, struct AYUV& ayuv)
             break;
         }
 
-        for (unsigned short i = 0; i < ayuv.height; ++i)
+        for (unsigned short i = 0; i < argb.height; ++i)
         {
-            row_pointers[i] = ayuv.vaddr + i*rowbytes;
+            row_pointers[i] = argb.argb_addr + i*rowbytes;
         }
         //读取png数据
         png_read_image(png_ptr, row_pointers);
