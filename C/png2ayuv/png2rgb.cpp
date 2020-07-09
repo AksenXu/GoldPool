@@ -119,7 +119,7 @@ int png_decode_to_argb(unsigned char* pngData, int pngLen, struct ARGB& argb)
             break;
         case PNG_COLOR_TYPE_RGB:
             break;
-        case PNG_COLOR_TYPE_RGB_ALPHA:
+        case PNG_COLOR_TYPE_RGB_ALPHA:      //RGBA
             break;
         default:
             break;
@@ -136,6 +136,7 @@ int png_decode_to_argb(unsigned char* pngData, int pngLen, struct ARGB& argb)
 
         //申请内存地址
         argb.size = rowbytes * argb.height;
+        argb.isARGB = color_type == PNG_COLOR_TYPE_RGB_ALPHA;
         AYUV_LOG("png_decode_to_ayuv: rowbytes %lu ayuv.height %d ayuv.size %d\n", rowbytes, argb.height, argb.size);
 
         argb.argb_addr = static_cast<unsigned char*>(malloc(argb.size * sizeof(unsigned char)));
@@ -156,17 +157,6 @@ int png_decode_to_argb(unsigned char* pngData, int pngLen, struct ARGB& argb)
         png_read_image(png_ptr, row_pointers);
         //结束读取数据
         png_read_end(png_ptr, NULL);
-
-        // premultiplied alpha for RGBA8888
-        if (color_type == PNG_COLOR_TYPE_RGB_ALPHA)
-        {
-            //预乘Alpha。使用渐变Alpha
-            //premultipliedAlpha();
-        }
-        else
-        {
-            //_hasPremultipliedAlpha = false;
-        }
 
         if (row_pointers != NULL)
         {
