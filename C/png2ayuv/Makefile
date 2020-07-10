@@ -1,5 +1,5 @@
 bin:
-	g++ -o png2ayuv ColorConv.cpp png2rgb.cpp argb2ayuv.cpp main.cpp -lpng
+	g++ -o png2ayuv ColorConv.cpp png2rgb.cpp rgba2ayuv.cpp main.cpp -lpng
 	g++ -o rawrgb2bmp rawrgb2bmp.cpp
 
 

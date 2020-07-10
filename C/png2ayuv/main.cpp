@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "png2rgb.h"
-#include "argb2ayuv.h"
+#include "rgba2ayuv.h"
 
 #include "../utils/FileUtils.h"
 
@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
     nv12 = (unsigned char*) malloc(dst_size);
     memset(nv12, 0, dst_size);
     AYUV_LOG("[%s]: overlay ayuv to nv12 %dx%d\n", argv[0], dst_w, dst_h);
-    overlayYUV(nv12, dst_w, dst_h, dst_w / 2, dst_h / 2, ayuv);
+    overlayNV12(nv12, dst_w, dst_h, dst_w / 2, dst_h / 2, ayuv);
 
     asprintf(&nv12file, "%s.ayuv.nv12", filename);
     AYUV_LOG("[%s]: store nv12 %s\n", argv[0], nv12file);

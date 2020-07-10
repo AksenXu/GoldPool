@@ -1,4 +1,4 @@
-#include "argb2ayuv.h"
+#include "rgba2ayuv.h"
 #include "ColorConv.h"
 #include <errno.h>
 
@@ -49,13 +49,16 @@ int rgba2ayuv(struct ARGB& rgba, struct AYUV& ayuv)
     return 0;
 }
 
-int overlayYUV(unsigned char* nv12, int w, int h, int xoff, int yoff, struct AYUV& ayuv)
+int overlayNV12(unsigned char* nv12, int w, int h, int xoff, int yoff, struct AYUV& ayuv)
 {
     unsigned char* payuv = ayuv.ayuv_addr;
+    unsigned char* dst_y_start = nv12 + w * yoff + xoff;
+    unsigned char* dst_uv_start = nv12 + w * h + w * yoff / 2 + (xoff & ~0x1);
 
     for(int i = 0; i < ayuv.height; i++) {
-        unsigned char* y = nv12 + w * (yoff + i) + xoff;
-        unsigned char* uv = nv12 + w * h + w * (yoff + i) / 2 + (xoff & ~1);
+        unsigned char* y = dst_y_start + w * i;
+        unsigned char* uv = dst_uv_start + w * i / 2;
+
         for(int j = 0; j < ayuv.width; j+=2) {
             int alpha = 255 - *(payuv + 0);
             
@@ -69,7 +72,6 @@ int overlayYUV(unsigned char* nv12, int w, int h, int xoff, int yoff, struct AYU
             alpha = 255 - *(payuv + 0); 
             *y ++ = ((((alpha * *y) / 255) & 0xFF) + *(payuv + 1)) & 0xFF;
             payuv += 4;
-
         }
     }
     return 0;

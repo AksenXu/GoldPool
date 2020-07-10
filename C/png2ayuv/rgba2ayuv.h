@@ -19,6 +19,6 @@ int rgba2ayuv(struct ARGB& rgba, struct AYUV& ayuv);
  *              ayuv: small overlay yuv, it's often the png decoded logo yuv
  * @return 0: overlay OK, -1: some error happen
  */
-int overlayYUV(unsigned char* nv12, int w, int h, int xoff, int yoff, struct AYUV& ayuv);
+int overlayNV12(unsigned char* nv12, int w, int h, int xoff, int yoff, struct AYUV& ayuv);
 
 #endif
