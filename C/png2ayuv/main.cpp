@@ -19,7 +19,9 @@ int main(int argc, char* argv[])
     int dst_h = 128;
     int dst_size = dst_w * dst_h * 3 / 2;
     unsigned char* nv12 = NULL;
+    unsigned char* yv12 = NULL;
     char* nv12file = NULL;
+    char* yv12file = NULL;
 
     if(argc != 2) {
         AYUV_LOG("Usage: %s file.png\n", argv[0]);
@@ -90,14 +92,23 @@ int main(int argc, char* argv[])
     AYUV_LOG("[%s]: store nv12 %s\n", argv[0], nv12file);
     if(nv12file) {
         writeFile(nv12file, (const char*)nv12, dst_size);
-    }    
+    }
 
+    yv12 = (unsigned char*) malloc(dst_size);
+    NV12toYV12(nv12, yv12, dst_w, dst_h);
+    asprintf(&yv12file, "%s.ayuv.yv12", filename);
+    AYUV_LOG("[%s]: store yv12 %s\n", argv[0], yv12file);
+    if(yv12file) {
+        writeFile(yv12file, (const char*)yv12, dst_size);
+    }
 exit:
     free(rgbafile);
     free(rgbfile);
     free(ayuvfile);
     free(pngData);
     free(nv12);
+    free(yv12);
     free(nv12file);
+    free(yv12file);
     return 0;
 }

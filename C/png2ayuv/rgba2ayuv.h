@@ -21,4 +21,7 @@ int rgba2ayuv(struct ARGB& rgba, struct AYUV& ayuv);
  */
 int overlayNV12(unsigned char* nv12, int w, int h, int xoff, int yoff, struct AYUV& ayuv);
 
+
+int NV12toYV12(unsigned char* nv12, unsigned char* yv12, int w, int h);
+
 #endif

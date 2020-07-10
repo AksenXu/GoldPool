@@ -29,9 +29,10 @@ int rgba2ayuv(struct ARGB& rgba, struct AYUV& ayuv)
 
                 *(payuv + 0) = *(pargb + 3);
                 unsigned int alpha = *(payuv + 0);
-                *(payuv + 1) = (alpha * *(payuv + 1)) >> 8 & 0xFF;
-                *(payuv + 2) = (alpha * *(payuv + 2)) >> 8 & 0xFF;
-                *(payuv + 3) = (alpha * *(payuv + 3)) >> 8 & 0xFF;
+                *(payuv + 1) = ((alpha * *(payuv + 1)) >> 8) & 0xFF;
+                //FIXME:有一些bug吗？为什么色度乘以alpha以后，颜色不对了？
+                *(payuv + 2) = ((1/*alpha*/ * *(payuv + 2)) >> 8) & 0xFF;
+                *(payuv + 3) = ((1/*alpha*/ * *(payuv + 3)) >> 8) & 0xFF;
                 
                 pargb += 4;
                 payuv += 4;
@@ -53,11 +54,11 @@ int overlayNV12(unsigned char* nv12, int w, int h, int xoff, int yoff, struct AY
 {
     unsigned char* payuv = ayuv.ayuv_addr;
     unsigned char* dst_y_start = nv12 + w * yoff + xoff;
-    unsigned char* dst_uv_start = nv12 + w * h + w * yoff / 2 + (xoff & ~0x1);
+    unsigned char* dst_uv_start = nv12 + w * h + w * ((yoff / 2) & ~0x1) + (xoff & ~0x1);
 
     for(int i = 0; i < ayuv.height; i++) {
         unsigned char* y = dst_y_start + w * i;
-        unsigned char* uv = dst_uv_start + w * i / 2;
+        unsigned char* uv = dst_uv_start + w * ((i / 2) & ~0x1);
 
         for(int j = 0; j < ayuv.width; j+=2) {
             int alpha = 255 - *(payuv + 0);
@@ -73,6 +74,20 @@ int overlayNV12(unsigned char* nv12, int w, int h, int xoff, int yoff, struct AY
             *y ++ = ((((alpha * *y) / 255) & 0xFF) + *(payuv + 1)) & 0xFF;
             payuv += 4;
         }
+    }
+    return 0;
+}
+
+int NV12toYV12(unsigned char* nv12, unsigned char* yv12, int w, int h)
+{
+    memcpy(yv12, nv12, w * h);
+    unsigned char* u = yv12 + w * h;
+    unsigned char* v = u + w * h / 4;
+
+    unsigned char* uv = nv12 + w * h;
+    for(int i; i < w * h / 4; i++) {
+        * u ++ = * uv ++;
+        * v ++ = * uv ++;
     }
     return 0;
 }
