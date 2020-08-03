@@ -43,10 +43,16 @@ struct logger_entry_v2 {
     char        msg[0];    /* the entry's payload */
 };
 
-#define LOGGER_LOG_MAIN		"log/main"
-#define LOGGER_LOG_RADIO	"log/radio"
-#define LOGGER_LOG_EVENTS	"log/events"
-#define LOGGER_LOG_SYSTEM	"log/system"
+//#define LOGGER_LOG_MAIN		"log/main"
+//#define LOGGER_LOG_RADIO	"log/radio"
+//#define LOGGER_LOG_EVENTS	"log/events"
+//#define LOGGER_LOG_SYSTEM	"log/system"
+
+//FIXME:ubuntu下面已经有了/dev/log的目录，驱动会改变到/dev/log_xxxx
+#define LOGGER_LOG_MAIN		"log_main"
+#define LOGGER_LOG_RADIO	"log_radio"
+#define LOGGER_LOG_EVENTS	"log_events"
+#define LOGGER_LOG_SYSTEM	"log_system"
 
 /*
  * The maximum size of the log entry payload that can be

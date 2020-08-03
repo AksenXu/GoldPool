@@ -467,7 +467,10 @@ int main(int argc, char **argv)
     g_logformat = android_log_format_new();
 
     if (argc == 2 && 0 == strcmp(argv[1], "--test")) {
-        logprint_run_tests();
+        //logprint_run_tests();
+        ALOGI("++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        ALOGI("start output some log for debug");
+        ALOGI("++++++++++++++++++++++++++++++++++++++++++++++++++++");
         exit(0);
     }
 
