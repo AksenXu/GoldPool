@@ -47,10 +47,13 @@
 #include <unistd.h>
 
 #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
-#include <sys/_system_properties.h>
+#include <include/_system_properties.h>
 
-#include <sys/atomics.h>
-#include <bionic_atomic_inline.h>
+//#include <sys/atomics.h>
+//#include <bionic_atomic_inline.h>
+#include "android_header/memory.h"
+#include "android_header/android_filesystem_config.h"
+#include "ubuntu_header/ubuntu_futex.h"
 
 #define ALIGN(x, a) (((x) + (a - 1)) & ~(a - 1))
 
@@ -115,6 +118,11 @@ prop_area *__system_property_area__ = NULL;
 
 size_t pa_data_size;
 size_t pa_size;
+
+static void ANDROID_MEMBAR_FULL()
+{
+    __asm__ __volatile__ ( "mfence" : : : "memory" );
+}
 
 static int get_fd_from_env(void)
 {
@@ -432,20 +440,22 @@ static const prop_info *find_property(prop_bt *trie, const char *name,
 
 const prop_info *__system_property_find(const char *name)
 {
+#if 0
     if (__predict_false(compat_mode)) {
         return __system_property_find_compat(name);
     }
+#endif    
     return find_property(root_node(), name, strlen(name), NULL, 0, false);
 }
 
 int __system_property_read(const prop_info *pi, char *name, char *value)
 {
     unsigned serial, len;
-
+#if 0
     if (__predict_false(compat_mode)) {
         return __system_property_read_compat(pi, name, value);
     }
-
+#endif
     for(;;) {
         serial = pi->serial;
         while(SERIAL_DIRTY(serial)) {
@@ -702,8 +712,15 @@ static int foreach_property(prop_off_t off,
 int __system_property_foreach(void (*propfn)(const prop_info *pi, void *cookie),
         void *cookie)
 {
+#if 0
     if (__predict_false(compat_mode)) {
         return __system_property_foreach_compat(propfn, cookie);
 	}
+#endif    
     return foreach_property(0, propfn, cookie);
+}
+
+int main()
+{
+    return 0;
 }

@@ -1,17 +1,15 @@
 CC = g++
 AR = ar
-CFLAGS  := -Wall -O3 -DHAVE_SYS_UIO_H -Wno-unused-variable -Wno-comment -Wno-unused-function
-Include = -I.
+CFLAGS  := -Wall -O3 -Wno-unused-variable -Wno-comment -Wno-unused-function
+Include = -I../
 
-Sources =   logprint.c      \
-            logd_write.c    \
-            event_tag_map.c \
+Sources =   memory.c
 
 OBJS = $(Sources:.c=.o)
 $(info OBJS=$(OBJS))
 
-static_lib=liblog.a
-shared_lib=liblog.so
+static_lib=libutils.a
+shared_lib=libutils.so
 
 all: $(static_lib) $(shared_lib)
 
