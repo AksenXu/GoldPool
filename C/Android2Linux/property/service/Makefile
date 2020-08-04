@@ -5,7 +5,7 @@ Include = -I.. -I../include -I../..
 
 LDFLAGS := -L../../libutils -lutils
 
-Sources = system_properties.c
+Sources = system_properties.c property_service.c main.c
 
 OBJS = $(Sources:.c=.o)
 

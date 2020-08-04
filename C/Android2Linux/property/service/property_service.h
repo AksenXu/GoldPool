@@ -19,6 +19,7 @@
 
 #include <stdbool.h>
 #include <include/system_properties.h>
+#include <sys/types.h>
 
 extern void handle_property_set_fd(void);
 extern void property_init(void);

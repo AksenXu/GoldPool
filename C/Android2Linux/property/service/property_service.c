@@ -25,11 +25,11 @@
 #include <limits.h>
 #include <errno.h>
 
-#include <cutils/misc.h>
-#include <cutils/sockets.h>
+//#include <cutils/misc.h>
+//#include <cutils/sockets.h>
 
 #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
-#include <sys/_system_properties.h>
+#include <include/_system_properties.h>
 
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -37,16 +37,18 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <sys/mman.h>
-#include <sys/atomics.h>
-#include <private/android_filesystem_config.h>
+//#include <sys/atomics.h>
+#include <android_header/android_filesystem_config.h>
 
-#include <selinux/selinux.h>
-#include <selinux/label.h>
+//#include <selinux/selinux.h>
+//#include <selinux/label.h>
 
 #include "property_service.h"
-#include "init.h"
-#include "util.h"
-#include "log.h"
+//#include "init.h"
+//#include "util.h"
+#include "libutils/Log.h"
+#include "libutils/FileUtil.h"
+#include "libutils/SocketUtil.h"
 
 #define PERSISTENT_PROPERTY_DIR  "/data/property"
 
@@ -154,6 +156,8 @@ static int init_property_area(void)
 
 static int check_mac_perms(const char *name, char *sctx)
 {
+    return 1;
+    #if 0
     if (is_selinux_enabled() <= 0)
         return 1;
 
@@ -177,10 +181,13 @@ static int check_mac_perms(const char *name, char *sctx)
     freecon(tctx);
  err:
     return result;
+    #endif
 }
 
 static int check_control_mac_perms(const char *name, char *sctx)
 {
+    return 1;
+    #if 0
     /*
      *  Create a name prefix out of ctl.<service name>
      *  The new prefix allows the use of the existing
@@ -194,6 +201,7 @@ static int check_control_mac_perms(const char *name, char *sctx)
         return 0;
 
     return check_mac_perms(ctl_name, sctx);
+    #endif
 }
 
 /*
@@ -204,6 +212,8 @@ static int check_control_mac_perms(const char *name, char *sctx)
  */
 static int check_control_perms(const char *name, unsigned int uid, unsigned int gid, char *sctx) {
 
+    return 1;
+#if 0
     int i;
     if (uid == AID_SYSTEM || uid == AID_ROOT)
       return check_control_mac_perms(name, sctx);
@@ -218,6 +228,7 @@ static int check_control_perms(const char *name, unsigned int uid, unsigned int 
         }
     }
     return 0;
+#endif
 }
 
 /*
@@ -226,6 +237,9 @@ static int check_control_perms(const char *name, unsigned int uid, unsigned int 
  */
 static int check_perms(const char *name, unsigned int uid, unsigned int gid, char *sctx)
 {
+    return 1;
+    //暂时先不管权限
+#if 0    
     int i;
     unsigned int app_id;
 
@@ -252,6 +266,7 @@ static int check_perms(const char *name, unsigned int uid, unsigned int gid, cha
     }
 
     return 0;
+#endif
 }
 
 int __property_get(const char *name, char *value)
@@ -334,6 +349,9 @@ int property_set(const char *name, const char *value)
             return ret;
         }
     }
+    
+    //设置特殊的属性时候，可以触发一些特殊处理的逻辑
+#if 0    
     /* If name starts with "net." treat as a DNS property. */
     if (strncmp("net.", name, strlen("net.")) == 0)  {
         if (strcmp("net.change", name) == 0) {
@@ -356,7 +374,8 @@ int property_set(const char *name, const char *value)
                strcmp("1", value) == 0) {
         selinux_reload_policy();
     }
-    property_changed(name, value);
+#endif    
+    //property_changed(name, value);
     return 0;
 }
 
@@ -401,7 +420,7 @@ void handle_property_set_fd()
             close(s);
             return;
         }
-
+#if 0
         getpeercon(s, &source_ctx);
 
         if(memcmp(msg.name,"ctl.",4) == 0) {
@@ -416,7 +435,9 @@ void handle_property_set_fd()
             }
         } else {
             if (check_perms(msg.name, cr.uid, cr.gid, source_ctx)) {
+#endif                
                 property_set((char*) msg.name, (char*) msg.value);
+#if 0
             } else {
                 ERROR("sys_prop: permission denied uid:%d  name:%s\n",
                       cr.uid, msg.name);
@@ -425,9 +446,12 @@ void handle_property_set_fd()
             // Note: bionic's property client code assumes that the
             // property server will not close the socket until *AFTER*
             // the property is written to memory.
+#endif
             close(s);
+#if 0            
         }
         freecon(source_ctx);
+#endif
         break;
 
     default:
@@ -451,11 +475,6 @@ static void load_properties(char *data)
     unsigned sz;
 
     bootargs = read_file(fn, &sz);
-
-    if(bootargs == 0) {
-        ERROR("---CM: failed to read %s\n", fn);
-    }
-
     sol = data;
     while((eol = strchr(sol, '\n'))) {
         key = sol;
@@ -475,14 +494,6 @@ static void load_properties(char *data)
         tmp = eol - 2;
         while((tmp > value) && isspace(*tmp)) *tmp-- = 0;
 
-        // ---CM: make those prop in bootargs the most priority, ignore it in default.prop
-        if(bootargs != 0) {
-            blk_list = strstr(bootargs, key);
-            if(blk_list != 0) {
-                ERROR("---CM: Skip prop: %s, for it is in bootargs\n", key);
-                continue;
-            }
-        }
         property_set(key, value);
     }
 
@@ -504,7 +515,6 @@ static void load_properties_from_file(const char *fn)
     }
     else
     {
-        ERROR("---CM: failed to load prop file: %s\n", fn);
     }
     
 }
@@ -613,23 +623,6 @@ void load_persist_props(void)
 void start_property_service(void)
 {
     int fd;
-
-    /* libc/include/sys/_system_properties.h:83:#define PROP_PATH_SYSTEM_DEFAULT   "/system/default.prop“ */
-    char hw_ver[PROP_VALUE_MAX];
-    char model_default[PROP_VALUE_MAX];
-    int ret = property_get("ro.hw.version", hw_ver);
-    if (ret && strlen(hw_ver) > 0){
-        snprintf(model_default, sizeof(model_default), "%s.%s", PROP_PATH_RAMDISK_DEFAULT, hw_ver);
-        load_properties_from_file(model_default);
-        //Not a error but force to print the log.
-        ERROR("---CM: load model default property file: %s\n", model_default);
-    } 
-    else
-    {
-        ERROR("---CM: failed to load model default property file\n");
-    }
-    
-
     load_properties_from_file(PROP_PATH_SYSTEM_DEFAULT);
     
     load_properties_from_file(PROP_PATH_SYSTEM_BUILD);

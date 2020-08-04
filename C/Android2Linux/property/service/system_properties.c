@@ -719,8 +719,3 @@ int __system_property_foreach(void (*propfn)(const prop_info *pi, void *cookie),
 #endif    
     return foreach_property(0, propfn, cookie);
 }
-
-int main()
-{
-    return 0;
-}
