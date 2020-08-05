@@ -1,18 +1,18 @@
 CC = g++
 AR = ar
-CFLAGS  := -Wall -O3 -Wno-unused-variable -Wno-comment -Wno-unused-function -fpermissive
-Include = -I../
+CFLAGS  := -Wall -O3 -Wno-unused-variable -Wno-comment -Wno-unused-function -DHAVE_LIBC_SYSTEM_PROPERTIES -DHAVE_SYS_UIO_H -DHAVE_IOCTL -fpermissive
 
-Sources =   memory.c \
-            SocketUtil.c \
-            FileUtil.c \
-            dynarray.c
+Include = -I../.. -I. -I../
+
+Sources =   properties.c system_properties.c property_service.c
+
+LDFLAGS := -L../../libutils -lutils
 
 OBJS = $(Sources:.c=.o)
 $(info OBJS=$(OBJS))
 
-static_lib=libutils.a
-shared_lib=libutils.so
+static_lib=libprop.a
+shared_lib=libprop.so
 
 all: $(static_lib) $(shared_lib)
 

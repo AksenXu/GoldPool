@@ -19,17 +19,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <cutils/sockets.h>
+#include <libutils/SocketUtil.h>
 #include <errno.h>
 #include <assert.h>
 
-#include <cutils/properties.h>
-#include "loghack.h"
+#include <properties.h>
+//#include "loghack.h"
 
 #ifdef HAVE_LIBC_SYSTEM_PROPERTIES
 
 #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
-#include <sys/_system_properties.h>
+#include <include/_system_properties.h>
 
 int property_set(const char *key, const char *value)
 {
@@ -62,7 +62,7 @@ static void property_list_callback(const prop_info *pi, void *cookie)
 {
     char name[PROP_NAME_MAX];
     char value[PROP_VALUE_MAX];
-    struct property_list_callback_data *data = cookie;
+    struct property_list_callback_data *data = (struct property_list_callback_data *)cookie;
 
     __system_property_read(pi, name, value);
     data->propfn(name, value, data->cookie);
@@ -262,7 +262,7 @@ int property_list(void (*propfn)(const char *key, const char *value, void *cooki
 
 /* SUPER-cheesy place-holder implementation for Win32 */
 
-#include <cutils/threads.h>
+//#include <cutils/threads.h>
 
 static mutex_t  env_lock = MUTEX_INITIALIZER;
 

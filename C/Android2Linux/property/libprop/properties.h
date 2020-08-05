@@ -19,7 +19,7 @@
 
 #include <sys/cdefs.h>
 #include <stddef.h>
-#include <sys/system_properties.h>
+#include <include/system_properties.h>
 
 #ifdef __cplusplus
 extern "C" {

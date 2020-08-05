@@ -1,11 +1,11 @@
 CC = g++
 AR = ar
 CFLAGS  := -Wall -O3 -DHAVE_SYS_UIO_H -Wno-unused-variable -Wno-comment -Wno-unused-function -DHAVE_IOCTL -fpermissive
-Include = -I.. -I../include -I../..
+Include = -I.. -I../libprop -I../..
 
-LDFLAGS := -L../../libutils -lutils
+LDFLAGS := -L../libprop -lprop -L../../libutils -lutils
 
-Sources = system_properties.c property_service.c main.c
+Sources = main.c
 
 OBJS = $(Sources:.c=.o)
 

@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <cutils/properties.h>
+#include <libprop/properties.h>
 
-#include <sys/system_properties.h>
-#include "dynarray.h"
+#include <include/system_properties.h>
+#include "libutils/dynarray.h"
 
 static void record_prop(const char* key, const char* name, void* opaque)
 {
@@ -33,7 +33,7 @@ static void list_properties(void)
 
 int __system_property_wait(prop_info *pi);
 
-int getprop_main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     int n = 0;
 

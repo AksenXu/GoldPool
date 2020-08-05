@@ -1,8 +1,8 @@
 #include <stdio.h>
 
-#include <cutils/properties.h>
+#include <libprop/properties.h>
 
-int setprop_main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     if(argc != 3) {
         fprintf(stderr,"usage: setprop <key> <value>\n");
