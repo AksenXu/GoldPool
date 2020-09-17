@@ -14,6 +14,7 @@ BIN=logcat
 
 all: $(OBJS) 
 	$(CC) -o $(BIN) $^ $(LDFLAGS)
+	sudo cp $(BIN) /usr/bin
 
 %.o:%.cpp
 	$(CC) -g -c -Os -fPIC $(Include) $(CFLAGS) $(Sources)

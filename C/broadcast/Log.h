@@ -3,11 +3,11 @@
 
 #include <string.h>
 #include <errno.h>
+#include "liblog/log/log.h"
 
-#define     LOGD    printf
-#define     LOGI    printf
-#define     LOGW    printf
-#define     LOGE    printf
-
+#define     LOGD    ALOGD
+#define     LOGI    ALOGI
+#define     LOGW    ALOGW
+#define     LOGE    ALOGE
 
 #endif

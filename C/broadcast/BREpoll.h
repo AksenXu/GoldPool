@@ -8,6 +8,7 @@
 #include <pthread.h>
 #include <sys/epoll.h>
 #include "listhead.h"
+#include "Mutex.h"
 
 struct processorList;
 class BaseProcessor;

@@ -1,3 +1,5 @@
+#define LOG_TAG "BREpoll"
+
 #include "Log.h"
 #include "ConnProcessor.h"
 #include "listhead.h"
@@ -55,7 +57,7 @@ struct processorList* BREpoll::findProcessListLocked(int fd)
         }
     }
 
-    LOGI("BREpoll new fd %d coming", fd);
+    LOGI("BREpoll new fd %d coming, add to epoll", fd);
     return NULL;
 }
 
@@ -97,7 +99,8 @@ int BREpoll::regist(struct BaseProcessor* processor, int events)
         _epoll_ctl(mEpollFD, EPOLL_CTL_MOD, fd, &epEvent);
     }
 
-    LOGI("BREpoll regist fd %d event 0x%x", fd, events);
+    LOGI("BREpoll regist fd %d event 0x%x EPOLLIN %x EPOLLRDHUP %x EPOLLOUT %x epolllistcount %d", 
+                        fd, events, EPOLLIN, EPOLLRDHUP, EPOLLOUT, mRegistProcessorsHeadList.count);
     pthread_mutex_unlock(&mMutex);
 }
 

@@ -13,13 +13,16 @@ $(info OBJS=$(OBJS))
 static_lib=liblog.a
 shared_lib=liblog.so
 
-all: $(static_lib) $(shared_lib)
+all: $(static_lib) $(shared_lib) install
 
 $(static_lib): $(OBJS)
 	$(AR) rcs $(static_lib) $@ $^
 
 $(shared_lib): $(OBJS)
 	$(CC) -fPIC -shared -o $@ $^
+
+install:
+	sudo cp liblog.so /usr/lib
 
 %.o:%.c
 	$(CC) -g -c -Os -fPIC $(Include) $(CFLAGS) $(Sources)

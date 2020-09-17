@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <inttypes.h>
 #include "IOBuffer.h"
+#include "Mutex.h"
 
 #define  PROCESS_BUFFER_SIZE  4096
 class BREpoll;
@@ -12,17 +13,8 @@ class BREpoll;
 class BaseProcessor
 {
 public:
-    BaseProcessor(int fd, BREpoll* poller) {
-        mFD = fd;
-        mPoller = poller;
-    }
-
-    virtual ~BaseProcessor() {
-        if(mFD >= 0) {
-            close(mFD);
-            mFD = -1;
-        }
-    }
+    BaseProcessor(int fd, BREpoll* poller);
+    virtual ~BaseProcessor();
 
     virtual int processEvent(uint32_t event) = 0;
     virtual int processData() { return 0; }
@@ -37,12 +29,15 @@ protected:
     IOBuffer mInputData;
     IOBuffer mOutputData;
     BREpoll* mPoller;
+
+    Condition mCond;
+    Mutex mMutex;
 };
 
 class BRServerListenProcessor : public BaseProcessor
 {
 public:
-    BRServerListenProcessor(int fd, BREpoll* poller);
+    BRServerListenProcessor(BREpoll* poller, int listenPort);
     virtual ~BRServerListenProcessor();
 
     int processEvent(uint32_t event);
@@ -57,9 +52,15 @@ public:
     virtual ~BRClientProcessor();
 
     int processEvent(uint32_t event);
+    
+    //receive broadcast and process
     int processData();
 
+    //send broadcast and wait socket sent
+    int appendData(const char* data, int length);
+
 private:
+    int connectServer();
 };
 
 #endif
