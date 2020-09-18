@@ -8,69 +8,39 @@
 static BREpoll* sBREpoll = NULL;
 static BRClientProcessor* sBRClient = NULL;
 
-static int createBRClient()
-{
-    sBREpoll = new BREpoll();
-    sBRClient = new BRClientProcessor(-1, sBREpoll);
-    return 0;
-}
-
-static int destroyBRClient()
-{
-    if(sBRClient) delete sBRClient;
-    if(sBREpoll) delete sBREpoll;
-    LOGI("destroyBRClient done");
-}
 
 static int buildCmdDataandSend(int cmd, const char* str, const char* data, int dataSize)
 {
     
 }
 
-int registerBroadcast(int cmd, BRFuncCB cb, void* cookie)
+int createBRClient()
 {
-    if(sBREpoll == NULL) {
-        createBRClient();
-    }
-
-
-
+    sBREpoll = new BREpoll();
+    sBRClient = new BRClientProcessor(-1, sBREpoll);
+    LOGI("createBRClient sBREpoll %p sBRClient %p", sBREpoll, sBRClient);
     return 0;
 }
 
-int unregisterBroadcast(int cmd, void* cookie)
+int destroyBRClient()
 {
-    if(sBREpoll == NULL) {
-        createBRClient();
-    }
-
+    if(sBRClient) delete sBRClient;
+    if(sBREpoll) delete sBREpoll;
+    LOGI("destroyBRClient done");
     return 0;
 }
 
-int sendBroadcast(int cmd, const char* str, const char* data, int dataSize)
+int registerBroadcast(const char* cmd, BRFuncCB cb, void* cookie)
 {
-    if(sBREpoll == NULL) {
-        createBRClient();
-    }
-
     return 0;
 }
 
-static int testBRFuncCB(BRCmd& cmd, void* cookie)
+int unregisterBroadcast(const char* cmd, BRFuncCB cb)
 {
-    LOGI("testBRFuncCB cmd %d BR_TEST %d cookie %p", cmd.cmdid, BR_TEST, cookie);
+    return 0;
 }
 
-int main(int argc, char* argv[])
+int sendBroadcast(const char* cmd, const char* str, const char* data, int dataSize)
 {
-    if(argc == 1) {
-        LOGI("create client and wait broadcast");
-        registerBroadcast(BR_TEST, testBRFuncCB, NULL);
-        loopAndWait("client");
-    } else {
-        sendBroadcast(BR_TEST, NULL, NULL, 0);
-    }
-
-    destroyBRClient();
     return 0;
 }
