@@ -13,7 +13,7 @@
 #ifndef _TYPEDEF_H
 #define _TYPEDEF_H
 
-typedef char Word8;
+typedef signed char Word8;
 typedef unsigned char UWord8;
 typedef short Word16;
 typedef int Word32;
